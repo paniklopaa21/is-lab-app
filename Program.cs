@@ -31,14 +31,10 @@ var lastId = 0;
 
 app.MapPost("/api/notes", (NoteInput input) =>
 {
-    if (string.IsNullOrWhiteSpace(input.Title))
+    var error = NoteRules.Validate(input.Title);
+    if (error is not null)
     {
-        return Results.BadRequest(new { error = "Title is required" });
-    }
-
-    if (input.Title.Length > 200)
-    {
-        return Results.BadRequest(new { error = "Title must be 200 characters or less" });
+        return Results.BadRequest(new { error });
     }
 
     var id = Interlocked.Increment(ref lastId);
